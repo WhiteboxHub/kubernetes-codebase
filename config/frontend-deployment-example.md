@@ -1,32 +1,82 @@
+# Frontend Deployment Configuration
 
-# Frontend Deployment Example
+This document explains the configuration of the Kubernetes Deployment for the WhiteBox Learning frontend application.
 
-This is an example of a Kubernetes deployment configuration for the frontend service.
+## Overview
 
-## Deployment Configuration
+The deployment configuration is responsible for managing the lifecycle of the frontend application pods. It ensures that the specified number of replicas are running and handles updates and scaling.
+
 
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-deployment
+  name: wbl-frontend-new-deployment
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: wbl-frontend-new
+  template:
+    metadata:
+      labels:
+        app: wbl-frontend-new
+    spec:
+      containers:
+      - name: wbl-frontend-new
+        image: remote123/whiteboxlearning:wbll-frontt5
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        envFrom:
+        - configMapRef:
+            name: frontend-config
 ```
+## Configuration Breakdown
 
-### Explanation
+### apiVersion and kind
+- **apiVersion: apps/v1**: Specifies the API version of the Kubernetes Deployment resource. `apps/v1` is the stable version for deployments.
+- **kind: Deployment**: Indicates that this configuration is for a Deployment resource, which manages a set of identical pods.
 
-- `apiVersion: apps/v1`: Specifies the API version of the Kubernetes object. `apps/v1` is the stable version for deployments.
-- `kind: Deployment`: Indicates that this configuration is for a Deployment, which manages a set of identical pods.
-- `metadata`: Contains data that helps uniquely identify the object, including a `name`.
-  - `name: frontend-deployment`: The name of the deployment. You can use this name with `kubectl` commands, e.g., `kubectl get deployment frontend-deployment`.
-- `spec`: Defines the desired state of the deployment.
-  - `replicas: 3`: Specifies the number of pod replicas to run. You can scale this with `kubectl scale deployment frontend-deployment --replicas=5`.
-  - `selector`: Defines how the deployment finds which pods to manage.
-    - `matchLabels`: A set of key-value pairs used to select pods.
-      - `app: frontend`: The label used to identify the pods managed by this deployment.
+### Metadata
+- **name: wbl-frontend-new-deployment**: The name of the deployment. This is used to identify the deployment within the Kubernetes cluster.
 
-The following YAML configuration defines a deployment for the `wbl-frontend-new` application.
+### Spec
+- **replicas: 1**: Specifies the desired number of pod replicas. In this case, only one instance of the application will be running.
+
+#### Selector
+- **matchLabels**: 
+  - **app: wbl-frontend-new**: This label is used to identify the pods that belong to this deployment. It matches the labels defined in the pod template.
+
+#### Template
+- **metadata**:
+  - **labels**: 
+    - **app: wbl-frontend-new**: Labels applied to the pods created by this deployment. These labels are used for service discovery and management.
+
+- **spec**:
+  - **containers**: Defines the container specifications for the pods.
+    - **name: wbl-frontend-new**: The name of the container.
+    - **image: remote123/whiteboxlearning:wbll-frontt5**: The Docker image used for the container. This image contains the application code and dependencies.
+    - **ports**:
+      - **containerPort: 3000**: Exposes port 3000 on the container, which is the port the application listens on.
+    - **resources**:
+      - **requests**:
+        - **cpu: "200m"**: The minimum amount of CPU resources requested for the container.
+        - **memory: "256Mi"**: The minimum amount of memory requested for the container.
+      - **limits**:
+        - **cpu: "500m"**: The maximum amount of CPU resources the container can use.
+        - **memory: "512Mi"**: The maximum amount of memory the container can use.
+    - **envFrom**:
+      - **configMapRef**:
+        - **name: frontend-config**: References a ConfigMap named `frontend-config` to provide environment variables to the container. This allows for easy configuration management without hardcoding values in the deployment.
+
+## Conclusion
+
+This deployment configuration ensures that the frontend application is consistently running with the specified resources and environment settings. By using a ConfigMap for environment variables, it allows for flexible and secure configuration management. The deployment can be scaled by adjusting the `replicas` field, and resource requests and limits help manage application performance and stability.
+
