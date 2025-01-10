@@ -14,7 +14,11 @@ data:
   GOOGLE_CLIENT_ID: "example.apps.googleusercontent.com"
   GOOGLE_CLIENT_SECRET: "example_secret"
   NEXTAUTH_SECRET: "your_secret_key"
+  NEXT_PUBLIC_API_URL: "https://www.whitebox-learning.com/api/v1"
 ```
+
+## Configuration Breakdown
+
 ### apiVersion and kind
 - **apiVersion: v1**: Specifies the API version for the ConfigMap resource.
 - **kind: ConfigMap**: Defines the type of Kubernetes object, which in this case is a ConfigMap.
@@ -29,26 +33,6 @@ Holds the key-value pairs that make up the configuration data for the applicatio
 - **GOOGLE_CLIENT_ID**: The Google Client ID for OAuth, used to authenticate users via Google.
 - **GOOGLE_CLIENT_SECRET**: The Google Client Secret for OAuth, used in conjunction with the Client ID for secure authentication.
 - **NEXTAUTH_SECRET**: The secret key for NextAuth, used for signing and encryption.
+- **NEXT_PUBLIC_API_URL**: The URL for the Next.js frontend application, used to access the API.
 
-## Purpose
-
-This ConfigMap provides configuration data to the frontend application running in the Kubernetes cluster. By using a ConfigMap, you can manage configuration settings separately from the application code, allowing for easier updates and management. This approach also helps in maintaining consistency across different environments (e.g., development, staging, production) by simply changing the ConfigMap values.
-## Security Note
-
-While ConfigMaps are great for managing configuration data, they are not intended for storing sensitive information like passwords or API keys. For sensitive data, consider using Kubernetes Secrets, which provide a more secure way to handle confidential information.
-
-## Conclusion
-
-The `frontend-config` ConfigMap is a crucial part of the application's configuration management, ensuring that the necessary environment variables are available to the application without hardcoding them into the application code.
-
-How to run commands
-Finder => Application => Utilitaires => Terminal
-When you log on Unix machine, you will see,
-
-[someone]$
-
-One command consists of three parts, i.e. command name, options, arguments. 
-
-Example)
-[someone~]$ command-name  optionA optionB  argument1  argument2
-
+This configuration ensures that the frontend application has the necessary information to authenticate users, securely access the API, and function correctly within the Kubernetes cluster.
